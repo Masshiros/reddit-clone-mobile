@@ -4,15 +4,18 @@ import 'package:reddit_mobile/core/utils.dart';
 import 'package:reddit_mobile/features/auth/repository/auth.repository.dart';
 import 'package:reddit_mobile/models/user.model.dart';
 
-final authControllerProvider =
-    Provider((ref) => AuthController(ref.read(authRepositoryProvider)));
+final userProvider = StateProvider<UserModel?>((ref) => null);
 
-class AuthController {
+final authControllerProvider =
+    Provider((ref) => AuthController(ref.read(authRepositoryProvider),ref));
+
+class AuthController  {
   final AuthRepository _authRepository;
-  AuthController(AuthRepository authRepository)
-      : _authRepository = authRepository;
+  final Ref _ref;
+  AuthController(AuthRepository authRepository, Ref ref)
+      : _authRepository = authRepository, _ref = ref;
   void signInWithGoogle(BuildContext context) async {
     final user = await _authRepository.signInWithGoogle();
-    user.fold((l) => showSnackBar(context, l.message), (r) => print(r));
+    user.fold((l) => showSnackBar(context, l.message), (userModel) => _ref.read(userProvider.notifier).update((state) => userModel));
   }
 }
