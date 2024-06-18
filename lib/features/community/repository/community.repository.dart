@@ -43,4 +43,9 @@ class CommunityRepository {
       return communities;
     });
   }
+  Stream<Community> getCommunityByName(String name){
+    return _communities.doc(name).snapshots().map((snapshot){
+        return Community.fromMap(snapshot.data() as Map<String,dynamic>);
+    });
+  }
 }
