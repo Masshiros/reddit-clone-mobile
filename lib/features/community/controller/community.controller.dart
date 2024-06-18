@@ -11,6 +11,8 @@ final communityControllerProvider =
     StateNotifierProvider<CommunityController, bool>((ref) {
   return CommunityController(ref.watch(communityRepoProvider), ref);
 });
+final getUserCommunitiesProvider = StreamProvider((ref) =>
+    ref.read(communityControllerProvider.notifier).getUserCommunities());
 
 class CommunityController extends StateNotifier<bool> {
   final CommunityRepository _repository;
@@ -36,5 +38,10 @@ class CommunityController extends StateNotifier<bool> {
       showSnackBar(context, "Create community success");
       Routemaster.of(context).pop();
     });
+  }
+
+  Stream<List<Community>> getUserCommunities() {
+    final uid = _ref.read(userProvider)!.uid;
+    return _repository.getUserCommunities(uid);
   }
 }
