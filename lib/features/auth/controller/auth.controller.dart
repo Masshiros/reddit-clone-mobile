@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit_mobile/core/utils.dart';
@@ -11,6 +12,13 @@ final authControllerProvider = StateNotifierProvider<AuthController, bool>(
     ref.watch(authRepositoryProvider),
     ref,
   ),
+);
+final authStateChangeProvider = StreamProvider(
+  (ref) => ref.watch(authControllerProvider.notifier).getAuthStateChange(),
+);
+final getUserDataProvider = StreamProvider.family(
+  (ref, String uid) =>
+      ref.watch(authControllerProvider.notifier).getUserData(uid),
 );
 
 class AuthController extends StateNotifier<bool> {
@@ -28,5 +36,13 @@ class AuthController extends StateNotifier<bool> {
         (l) => showSnackBar(context, l.message),
         (userModel) =>
             _ref.read(userProvider.notifier).update((state) => userModel));
+  }
+
+  Stream<User?> getAuthStateChange() {
+    return _authRepository.authStateChange;
+  }
+
+  Stream<UserModel> getUserData(String uid) {
+    return _authRepository.getUserData(uid);
   }
 }
