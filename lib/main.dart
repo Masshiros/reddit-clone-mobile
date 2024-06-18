@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit_mobile/features/auth/screens/login.screen.dart';
 import 'package:reddit_mobile/firebase_options.dart';
+import 'package:reddit_mobile/routes.dart';
 import 'package:reddit_mobile/theme/palette.dart';
+import 'package:routemaster/routemaster.dart';
 import 'dart:ui' as ui;
 import 'firebase_options.dart'; //
 
@@ -18,7 +20,6 @@ void main() async {
         AndroidProvider.debug, // Use debug provider for development
     appleProvider: AppleProvider.debug, // Use debug provider for development
   );
-  
 
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -29,10 +30,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Demo',
       theme: Palette.darkModeAppTheme,
-      home: const LoginScreen(),
+      routerDelegate:
+          RoutemasterDelegate(routesBuilder: (context) => loggedOutRoute),
+      routeInformationParser: const RoutemasterParser(),
       debugShowCheckedModeBanner: false,
     );
   }
