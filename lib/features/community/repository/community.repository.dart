@@ -55,6 +55,18 @@ class CommunityRepository {
     }
   }
 
+  VoidEither addMods(String communityName, List<String> uids) async {
+    try {
+      return right(_communities.doc(communityName).update({
+        'mods': uids,
+      }));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
   Stream<List<Community>> getUserCommunities(String uid) {
     return _communities
         .where("members", arrayContains: uid)
@@ -64,6 +76,7 @@ class CommunityRepository {
       for (final doc in snapshot.docs) {
         communities.add(Community.fromMap(doc.data() as Map<String, dynamic>));
       }
+
       return communities;
     });
   }

@@ -105,7 +105,8 @@ class CommunityController extends StateNotifier<bool> {
       },
     );
   }
-void joinCommunity(Community community, BuildContext context) async {
+
+  void joinCommunity(Community community, BuildContext context) async {
     final user = _ref.read(userProvider)!;
 
     Either<Failure, void> res;
@@ -123,6 +124,16 @@ void joinCommunity(Community community, BuildContext context) async {
       }
     });
   }
+
+  void addMods(
+      String communityName, List<String> uids, BuildContext context) async {
+    final res = await _repository.addMods(communityName, uids);
+    res.fold(
+      (l) => showSnackBar(context, l.message),
+      (r) => Routemaster.of(context).pop(),
+    );
+  }
+
   Stream<List<Community>> searchCommunity(String query) {
     return _repository.searchCommunity(query);
   }
