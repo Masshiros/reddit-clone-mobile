@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reddit_mobile/features/auth/screens/login.screen.dart';
 import 'package:reddit_mobile/features/community/screens/community-detail.screen.dart';
 import 'package:reddit_mobile/features/community/screens/create-community.screen.dart';
+import 'package:reddit_mobile/features/community/screens/mod-tools.screen.dart';
 import 'package:reddit_mobile/features/home/screens/home.screen.dart';
 import 'package:routemaster/routemaster.dart';
 
@@ -12,5 +13,9 @@ final loggedInRoute = RouteMap(routes: {
   '/create-community': (_) =>
       const MaterialPage(child: CreateCommunityScreen()),
   '/r/:name': (route) =>
-      MaterialPage(child: CommunityDetailScreen(route.pathParameters['name']!))
+      MaterialPage(child: CommunityDetailScreen(route.pathParameters['name']!)),
+  '/mod-tools/:name': (route) =>
+      MaterialPage(child: ModToolsScreen(route.pathParameters['name']!)),
+  '/edit-community/:name': (route) =>
+      MaterialPage(child: ModToolsScreen(route.pathParameters['name']!))
 });

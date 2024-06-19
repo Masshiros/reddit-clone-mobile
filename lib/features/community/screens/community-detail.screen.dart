@@ -4,10 +4,15 @@ import 'package:reddit_mobile/core/common/error-text.dart';
 import 'package:reddit_mobile/core/common/loading.dart';
 import 'package:reddit_mobile/features/auth/controller/auth.controller.dart';
 import 'package:reddit_mobile/features/community/controller/community.controller.dart';
+import 'package:routemaster/routemaster.dart';
 
 class CommunityDetailScreen extends ConsumerWidget {
   final String name;
   const CommunityDetailScreen(this.name, {super.key});
+
+  void navigateToModToolsScreen(BuildContext context, String name) {
+    Routemaster.of(context).push('/mod-tools/${name}');
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -58,7 +63,12 @@ class CommunityDetailScreen extends ConsumerWidget {
                                 ),
                                 community.mods.contains(uid)
                                     ? OutlinedButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          navigateToModToolsScreen(
+                                            context,
+                                            community.name,
+                                          );
+                                        },
                                         style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
