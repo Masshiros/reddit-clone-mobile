@@ -39,6 +39,7 @@ class MyApp extends ConsumerStatefulWidget {
 
 class _MyAppState extends ConsumerState<MyApp> {
   UserModel? userModel;
+  int count = 0;
   void getUserData(WidgetRef ref, User data) async {
     userModel = await ref
         .watch(authControllerProvider.notifier)
@@ -47,7 +48,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     // print(userModel);
     ref.read(userProvider.notifier).update((state) => userModel);
 
-    // setState(() {});
+    setState(() {});
   }
 
   @override
@@ -59,8 +60,10 @@ class _MyAppState extends ConsumerState<MyApp> {
             theme: Palette.darkModeAppTheme,
             routerDelegate: RoutemasterDelegate(routesBuilder: (context) {
               if (data != null) {
-                getUserData(ref, data);
-
+                if (count == 0) {
+                  getUserData(ref, data);
+                }
+                count++;
                 if (userModel != null) {
                   return loggedInRoute;
                 }
