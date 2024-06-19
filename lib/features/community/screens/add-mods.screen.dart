@@ -57,11 +57,13 @@ class _AddModsScreenState extends ConsumerState<AddModsScreen> {
                         data: (member) {
                           // check are there any mods in this community
                           // if widget just build at first time --> add already mods to list mods' uids --> be able to unselect already mods
-                          if (community.mods.contains(member.uid) &&
-                              count == 0) {
-                            uids.add(member.uid);
+                          // if (community.mods.contains(member.uid) &&
+                          //     count == 0) {
+                          //   uids.add(member.uid);
+                          // }
+                          if (count == 0) {
+                            uids = community.mods.toSet();
                           }
-                          print(community.mods);
                           count++;
 
                           return CheckboxListTile(
