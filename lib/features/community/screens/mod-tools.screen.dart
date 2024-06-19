@@ -32,7 +32,9 @@ class ModToolsScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.edit),
               title: const Text("Edit community"),
-              onTap: () {},
+              onTap: () {
+                navigateToEditCommunity(context, name);
+              },
             )
           ],
         ));
