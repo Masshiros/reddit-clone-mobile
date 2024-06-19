@@ -51,6 +51,7 @@ class _EditCommunityScreenState extends ConsumerState<EditCommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(communityControllerProvider);
     return ref.watch(getCommunityByNameProvider(widget.name)).when(
           data: (community) => Scaffold(
             appBar: AppBar(
@@ -68,64 +69,68 @@ class _EditCommunityScreenState extends ConsumerState<EditCommunityScreen> {
                 )
               ],
             ),
-            body: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 200,
-                    child: Stack(
+            body: isLoading
+                ? const Loading()
+                : Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
                       children: [
-                        GestureDetector(
-                          onTap: selectBannerImage,
-                          child: DottedBorder(
-                            borderType: BorderType.RRect,
-                            radius: const Radius.circular(10),
-                            dashPattern: const [10, 4],
-                            strokeCap: StrokeCap.round,
-                            color: Palette
-                                .darkModeAppTheme.textTheme.bodyMedium!.color!,
-                            child: Container(
-                              width: double.infinity,
-                              height: 150,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Center(
-                                child: bannerFile != null
-                                    ? Image.file(bannerFile!)
-                                    : community.banner.isEmpty ||
-                                            community.banner ==
-                                                Constants.bannerDefault
-                                        ? const Icon(Icons.camera_alt_outlined)
-                                        : Image.network(community.banner),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 20,
-                          bottom: 20,
-                          child: GestureDetector(
-                            onTap: selectProfileImage,
-                            child: profileFile != null
-                                ? CircleAvatar(
-                                    backgroundImage: FileImage(profileFile!),
-                                    radius: 32,
-                                  )
-                                : CircleAvatar(
-                                    backgroundImage:
-                                        NetworkImage(community.avatar),
-                                    radius: 32,
+                        SizedBox(
+                          height: 200,
+                          child: Stack(
+                            children: [
+                              GestureDetector(
+                                onTap: selectBannerImage,
+                                child: DottedBorder(
+                                  borderType: BorderType.RRect,
+                                  radius: const Radius.circular(10),
+                                  dashPattern: const [10, 4],
+                                  strokeCap: StrokeCap.round,
+                                  color: Palette.darkModeAppTheme.textTheme
+                                      .bodyMedium!.color!,
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 150,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Center(
+                                      child: bannerFile != null
+                                          ? Image.file(bannerFile!)
+                                          : community.banner.isEmpty ||
+                                                  community.banner ==
+                                                      Constants.bannerDefault
+                                              ? const Icon(
+                                                  Icons.camera_alt_outlined)
+                                              : Image.network(community.banner),
+                                    ),
                                   ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 20,
+                                bottom: 20,
+                                child: GestureDetector(
+                                  onTap: selectProfileImage,
+                                  child: profileFile != null
+                                      ? CircleAvatar(
+                                          backgroundImage:
+                                              FileImage(profileFile!),
+                                          radius: 32,
+                                        )
+                                      : CircleAvatar(
+                                          backgroundImage:
+                                              NetworkImage(community.avatar),
+                                          radius: 32,
+                                        ),
+                                ),
+                              )
+                            ],
                           ),
                         )
                       ],
                     ),
-                  )
-                ],
-              ),
-            ),
+                  ),
           ),
           error: (error, stackTrace) => ErrorText(error: error.toString()),
           loading: () => const Loading(),

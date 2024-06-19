@@ -76,6 +76,7 @@ class CommunityController extends StateNotifier<bool> {
     required Community community,
     required BuildContext context,
   }) async {
+    state = true;
     if (bannerFile != null) {
       final res = await _storageRepository.storeFile(
           path: "communities/banner", id: community.name, file: bannerFile);
@@ -93,6 +94,7 @@ class CommunityController extends StateNotifier<bool> {
       );
     }
     final res = await _repository.editCommunity(community);
+    state = false;
     res.fold(
       (l) => showSnackBar(context, l.message),
       (res) {
