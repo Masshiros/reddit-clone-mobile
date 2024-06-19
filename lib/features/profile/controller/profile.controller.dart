@@ -62,7 +62,10 @@ class UserProfileController extends StateNotifier<bool> {
       );
       res.fold(
         (l) => showSnackBar(context, l.message),
-        (r) => user = user.copyWith(banner: r),
+        (r) {
+          showSnackBar(context, "Edit profile success");
+          user = user.copyWith(banner: r);
+        },
       );
     }
 
