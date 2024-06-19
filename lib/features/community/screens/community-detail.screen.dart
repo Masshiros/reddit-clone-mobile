@@ -4,6 +4,7 @@ import 'package:reddit_mobile/core/common/error-text.dart';
 import 'package:reddit_mobile/core/common/loading.dart';
 import 'package:reddit_mobile/features/auth/controller/auth.controller.dart';
 import 'package:reddit_mobile/features/community/controller/community.controller.dart';
+import 'package:reddit_mobile/models/commuity.model.dart';
 import 'package:routemaster/routemaster.dart';
 
 class CommunityDetailScreen extends ConsumerWidget {
@@ -12,6 +13,12 @@ class CommunityDetailScreen extends ConsumerWidget {
 
   void navigateToModToolsScreen(BuildContext context, String name) {
     Routemaster.of(context).push('/mod-tools/${name}');
+  }
+
+  void joinCommunity(WidgetRef ref, Community community, BuildContext context) {
+    ref
+        .read(communityControllerProvider.notifier)
+        .joinCommunity(community, context);
   }
 
   @override
@@ -80,7 +87,8 @@ class CommunityDetailScreen extends ConsumerWidget {
                                         child: const Text('Mod Tools'),
                                       )
                                     : OutlinedButton(
-                                        onPressed: () {},
+                                        onPressed: () => joinCommunity(
+                                            ref, community, context),
                                         style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
@@ -95,7 +103,13 @@ class CommunityDetailScreen extends ConsumerWidget {
                                                 : 'Join'),
                                       )
                               ],
-                            )
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Text(
+                                '${community.members.length} members',
+                              ),
+                            ),
                           ]),
                         ),
                       )
