@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit_mobile/core/constants/constants.dart';
+import 'package:reddit_mobile/core/providers/storage-firebase.provider.dart';
 import 'package:reddit_mobile/core/utils.dart';
 import 'package:reddit_mobile/features/auth/controller/auth.controller.dart';
 import 'package:reddit_mobile/features/community/repository/community.repository.dart';
@@ -9,7 +13,13 @@ import 'package:routemaster/routemaster.dart';
 
 final communityControllerProvider =
     StateNotifierProvider<CommunityController, bool>((ref) {
-  return CommunityController(ref.watch(communityRepoProvider), ref);
+  return CommunityController(
+    ref.watch(communityRepoProvider),
+    ref,
+    ref.watch(
+      storageRepositoryProvider,
+    ),
+  );
 });
 final getUserCommunitiesProvider = StreamProvider((ref) =>
     ref.read(communityControllerProvider.notifier).getUserCommunities());
@@ -18,13 +28,19 @@ final getCommunityByNameProvider = StreamProvider.family(
   (ref, String name) =>
       ref.read(communityControllerProvider.notifier).getCommunityByName(name),
 );
+final searchCommunityProvider = StreamProvider.family((ref, String query) {
+  return ref.watch(communityControllerProvider.notifier).searchCommunity(query);
+});
 
 class CommunityController extends StateNotifier<bool> {
   final CommunityRepository _repository;
   final Ref _ref;
-  CommunityController(CommunityRepository repository, Ref ref)
+  final StorageRepository _storageRepository;
+  CommunityController(CommunityRepository repository, Ref ref,
+      StorageRepository storageRepository)
       : _repository = repository,
         _ref = ref,
+        _storageRepository = storageRepository,
         super(false);
   void createCommunity(String name, BuildContext context) async {
     state = true;
@@ -52,5 +68,41 @@ class CommunityController extends StateNotifier<bool> {
 
   Stream<Community> getCommunityByName(String name) {
     return _repository.getCommunityByName(name);
+  }
+
+  void editCommunity({
+    required File? profileFile,
+    required File? bannerFile,
+    required Community community,
+    required BuildContext context,
+  }) async {
+    if (bannerFile != null) {
+      final res = await _storageRepository.storeFile(
+          path: "communities/banner", id: community.name, file: bannerFile);
+      res.fold(
+        (l) => showSnackBar(context, l.message),
+        (res) => community = community.copyWith(banner: res),
+      );
+    }
+    if (profileFile != null) {
+      final res = await _storageRepository.storeFile(
+          path: "communities/profile", id: community.name, file: profileFile);
+      res.fold(
+        (l) => showSnackBar(context, l.message),
+        (res) => community = community.copyWith(avatar: res),
+      );
+    }
+    final res = await _repository.editCommunity(community);
+    res.fold(
+      (l) => showSnackBar(context, l.message),
+      (res) {
+        showSnackBar(context, "Edit success");
+        Routemaster.of(context).pop();
+      },
+    );
+  }
+
+  Stream<List<Community>> searchCommunity(String query) {
+    return _repository.searchCommunity(query);
   }
 }

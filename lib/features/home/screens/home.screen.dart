@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit_mobile/features/auth/controller/auth.controller.dart';
+import 'package:reddit_mobile/features/home/delegates/search-community.delegate.dart';
 import 'package:reddit_mobile/features/home/drawers/community.drawer.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -21,7 +22,13 @@ class HomeScreen extends ConsumerWidget {
           );
         }),
         actions: [
-          const Icon(Icons.search),
+          IconButton(
+            onPressed: () {
+              showSearch(
+                  context: context, delegate: SearchCommunityDelegate(ref));
+            },
+            icon: const Icon(Icons.search),
+          ),
           const SizedBox(
             width: 10,
           ),

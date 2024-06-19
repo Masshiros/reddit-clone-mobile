@@ -47,7 +47,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     // print(userModel);
     ref.read(userProvider.notifier).update((state) => userModel);
 
-    // setState(() {});
+    setState(() {});
   }
 
   @override

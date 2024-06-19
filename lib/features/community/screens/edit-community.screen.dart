@@ -8,6 +8,7 @@ import 'package:reddit_mobile/core/common/loading.dart';
 import 'package:reddit_mobile/core/constants/constants.dart';
 import 'package:reddit_mobile/core/utils.dart';
 import 'package:reddit_mobile/features/community/controller/community.controller.dart';
+import 'package:reddit_mobile/models/commuity.model.dart';
 import 'package:reddit_mobile/theme/palette.dart';
 
 class EditCommunityScreen extends ConsumerStatefulWidget {
@@ -40,6 +41,14 @@ class _EditCommunityScreenState extends ConsumerState<EditCommunityScreen> {
     });
   }
 
+  void save(Community community) {
+    ref.read(communityControllerProvider.notifier).editCommunity(
+        profileFile: profileFile,
+        bannerFile: bannerFile,
+        community: community,
+        context: context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return ref.watch(getCommunityByNameProvider(widget.name)).when(
@@ -49,7 +58,9 @@ class _EditCommunityScreenState extends ConsumerState<EditCommunityScreen> {
               centerTitle: false,
               actions: [
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    save(community);
+                  },
                   child: Text(
                     "Save",
                     style: TextStyle(color: Palette.blueColor),
