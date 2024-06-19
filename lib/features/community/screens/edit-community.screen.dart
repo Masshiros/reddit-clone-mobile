@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit_mobile/core/common/error-text.dart';
 import 'package:reddit_mobile/core/common/loading.dart';
+import 'package:reddit_mobile/core/constants/constants.dart';
 import 'package:reddit_mobile/core/utils.dart';
 import 'package:reddit_mobile/features/community/controller/community.controller.dart';
 import 'package:reddit_mobile/theme/palette.dart';
@@ -26,6 +27,15 @@ class _EditCommunityScreenState extends ConsumerState<EditCommunityScreen> {
     setState(() {
       if (res != null) {
         bannerFile = File(res.files.first.path!);
+      }
+    });
+  }
+
+  void selectProfileImage() async {
+    final res = await pickImage();
+    setState(() {
+      if (res != null) {
+        profileFile = File(res.files.first.path!);
       }
     });
   }
@@ -70,8 +80,15 @@ class _EditCommunityScreenState extends ConsumerState<EditCommunityScreen> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: const Center(
-                                  child: Icon(Icons.camera_alt_outlined)),
+                              child: Center(
+                                child: bannerFile != null
+                                    ? Image.file(bannerFile!)
+                                    : community.banner.isEmpty ||
+                                            community.banner ==
+                                                Constants.bannerDefault
+                                        ? const Icon(Icons.camera_alt_outlined)
+                                        : Image.network(community.banner),
+                              ),
                             ),
                           ),
                         ),
@@ -79,11 +96,17 @@ class _EditCommunityScreenState extends ConsumerState<EditCommunityScreen> {
                           left: 20,
                           bottom: 20,
                           child: GestureDetector(
-                            onTap: () {},
-                            child: CircleAvatar(
-                              backgroundImage: NetworkImage(community.avatar),
-                              radius: 32,
-                            ),
+                            onTap: selectProfileImage,
+                            child: profileFile != null
+                                ? CircleAvatar(
+                                    backgroundImage: FileImage(profileFile!),
+                                    radius: 32,
+                                  )
+                                : CircleAvatar(
+                                    backgroundImage:
+                                        NetworkImage(community.avatar),
+                                    radius: 32,
+                                  ),
                           ),
                         )
                       ],
