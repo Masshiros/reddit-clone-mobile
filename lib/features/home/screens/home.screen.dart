@@ -3,11 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit_mobile/features/auth/controller/auth.controller.dart';
 import 'package:reddit_mobile/features/home/delegates/search-community.delegate.dart';
 import 'package:reddit_mobile/features/home/drawers/community.drawer.dart';
+import 'package:reddit_mobile/features/home/drawers/profile.drawer.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
   void displayCommunityDrawer(context) {
     Scaffold.of(context).openDrawer();
+  }
+
+  void displayProfileDrawer(context) {
+    Scaffold.of(context).openEndDrawer();
   }
 
   @override
@@ -32,17 +37,22 @@ class HomeScreen extends ConsumerWidget {
           const SizedBox(
             width: 10,
           ),
-          IconButton(
-            onPressed: () {},
-            icon: CircleAvatar(
-              backgroundImage: NetworkImage(user.profilePic),
-            ),
-          ),
+          Builder(builder: (context) {
+            return IconButton(
+              onPressed: () {
+                displayProfileDrawer(context);
+              },
+              icon: CircleAvatar(
+                backgroundImage: NetworkImage(user.profilePic),
+              ),
+            );
+          }),
         ],
         title: const Text("Home"),
         centerTitle: false,
       ),
       drawer: const CommunityDrawer(),
+      endDrawer: const ProfileDrawer(),
     );
   }
 }
