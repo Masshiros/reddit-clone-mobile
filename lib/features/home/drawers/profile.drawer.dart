@@ -7,13 +7,13 @@ import 'package:routemaster/routemaster.dart';
 class ProfileDrawer extends ConsumerWidget {
   const ProfileDrawer({super.key});
 
- 
-
   void navigateToUserProfile(BuildContext context, String uid) {
     Routemaster.of(context).push('/u/$uid');
   }
 
- 
+  void logOut(WidgetRef ref) {
+    ref.read(authControllerProvider.notifier).logOut();
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -48,11 +48,13 @@ class ProfileDrawer extends ConsumerWidget {
                 Icons.logout,
                 color: Palette.redColor,
               ),
-              onTap: () {},
+              onTap: () {
+                logOut(ref);
+              },
             ),
             Switch.adaptive(
-              value: false ,
-              onChanged: (bool ){},
+              value: false,
+              onChanged: (bool) {},
             ),
           ],
         ),
