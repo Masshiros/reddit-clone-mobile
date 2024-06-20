@@ -6,6 +6,7 @@ import 'package:reddit_mobile/core/common/loading.dart';
 import 'package:reddit_mobile/core/constants/constants.dart';
 import 'package:reddit_mobile/features/auth/controller/auth.controller.dart';
 import 'package:reddit_mobile/features/community/controller/community.controller.dart';
+import 'package:reddit_mobile/features/posts/controller/post.controller.dart';
 import 'package:reddit_mobile/models/post.model.dart';
 import 'package:reddit_mobile/theme/palette.dart';
 import 'package:routemaster/routemaster.dart';
@@ -16,6 +17,9 @@ class PostCard extends ConsumerWidget {
     super.key,
     required this.post,
   });
+  void deletePost(WidgetRef ref, BuildContext context) async {
+    ref.read(postControllerProvider.notifier).deletePost(post, context);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -118,7 +122,9 @@ class PostCard extends ConsumerWidget {
                               ),
                               if (post.uid == user.uid)
                                 IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    return deletePost(ref, context);
+                                  },
                                   icon: Icon(
                                     Icons.delete,
                                     color: Palette.redColor,

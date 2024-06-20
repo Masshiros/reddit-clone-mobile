@@ -160,4 +160,10 @@ class PostController extends StateNotifier<bool> {
     }
     return Stream.value([]);
   }
+
+  void deletePost(Post post, BuildContext context) async {
+    final res = await _postRepository.deletePost(post);
+    res.fold((l) => null,
+        (r) => showSnackBar(context, 'Post Deleted successfully!'));
+  }
 }
