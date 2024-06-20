@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:reddit_mobile/core/enum/enums.dart';
 import 'package:reddit_mobile/features/auth/controller/auth.controller.dart';
 import 'package:reddit_mobile/theme/palette.dart';
 import 'package:routemaster/routemaster.dart';
 
-class ProfileDrawer extends ConsumerWidget {
+class ProfileDrawer extends ConsumerStatefulWidget {
   const ProfileDrawer({super.key});
 
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _ProfileDrawerState();
+}
+
+class _ProfileDrawerState extends ConsumerState<ProfileDrawer> {
   void navigateToUserProfile(BuildContext context, String uid) {
     Routemaster.of(context).push('/u/$uid');
   }
@@ -15,8 +21,14 @@ class ProfileDrawer extends ConsumerWidget {
     ref.read(authControllerProvider.notifier).logOut();
   }
 
+  void toggleTheme(WidgetRef ref) {
+    setState(() {
+      ref.watch(themeProvider.notifier).toggleTheme();
+    });
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final user = ref.watch(userProvider)!;
 
     return Drawer(
@@ -53,8 +65,8 @@ class ProfileDrawer extends ConsumerWidget {
               },
             ),
             Switch.adaptive(
-              value: false,
-              onChanged: (bool) {},
+              value: ref.watch(themeProvider.notifier).mode == EThemeMode.dark,
+              onChanged: (val) => toggleTheme(ref),
             ),
           ],
         ),

@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:reddit_mobile/core/enum/enums.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+final themeProvider =
+    StateNotifierProvider<ThemeNotifier, ThemeData>((ref) => ThemeNotifier());
 
 class Palette {
   // Colors
@@ -43,4 +49,41 @@ class Palette {
     primaryColor: redColor,
     // backgroundColor: whiteColor,
   );
+}
+
+class ThemeNotifier extends StateNotifier<ThemeData> {
+  EThemeMode _mode;
+  EThemeMode get mode => _mode;
+  ThemeNotifier({EThemeMode mode = EThemeMode.dark})
+      : _mode = mode,
+        super(Palette.darkModeAppTheme) {
+    getTheme();
+  }
+
+  void getTheme() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final theme = prefs.getString('theme');
+
+    if (theme == 'light') {
+      _mode = EThemeMode.light;
+      state = Palette.lightModeAppTheme;
+    } else {
+      _mode = EThemeMode.dark;
+      state = Palette.darkModeAppTheme;
+    }
+  }
+
+  void toggleTheme() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (_mode == EThemeMode.dark) {
+      _mode = EThemeMode.light;
+      state = Palette.lightModeAppTheme;
+      prefs.setString('theme', 'light');
+    } else {
+      _mode = EThemeMode.dark;
+      state = Palette.darkModeAppTheme;
+      prefs.setString('theme', 'dark');
+    }
+  }
 }
